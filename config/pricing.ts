@@ -55,7 +55,7 @@ export const UNITS: Unit[] = [
     weekdayPrice: 90000,
     weekendPrice: 120000,
     holidayPrice: 140000,
-    image: "/img/dusk-cabin.webp",
+    image: "/img/real-exterior.webp",
     features: ["Панорамное остекление", "Джакузи на террасе", "Камин", "Пирс"],
   },
   {
@@ -66,7 +66,7 @@ export const UNITS: Unit[] = [
     weekdayPrice: 130000,
     weekendPrice: 170000,
     holidayPrice: 200000,
-    image: "/img/cabin-forest.webp",
+    image: "/img/real-living-wide.webp",
     features: ["2 спальни", "Кухня-гостиная", "Барбекю-зона", "Детская площадка"],
   },
   {
@@ -77,7 +77,7 @@ export const UNITS: Unit[] = [
     weekdayPrice: 180000,
     weekendPrice: 230000,
     holidayPrice: 270000,
-    image: "/img/cabin-pier-day.webp",
+    image: "/img/real-pier.webp",
     features: ["До 16 гостей днём", "Сауна и купель", "Костровая зона", "Пляж и волейбол"],
   },
 ];

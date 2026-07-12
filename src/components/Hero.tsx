@@ -11,8 +11,8 @@ export default function Hero() {
       className="relative flex min-h-[100svh] items-end overflow-hidden"
     >
       <Image
-        src="/img/dawn-cabin.webp"
-        alt="Khan Orda на рассвете"
+        src="/img/real-exterior.webp"
+        alt="Домик Khan Orda с чаном под открытым небом"
         fill
         priority
         sizes="100vw"

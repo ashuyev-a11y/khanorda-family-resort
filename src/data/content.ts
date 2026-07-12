@@ -24,18 +24,18 @@ export const AMENITIES: { icon: string; label: string }[] = [
 ];
 
 export const GALLERY: { src: string; alt: string }[] = [
-  { src: "/img/dawn-cabin.webp", alt: "Домик на рассвете у воды" },
-  { src: "/img/sunset-tub.webp", alt: "Джакузи на закате" },
-  { src: "/img/deck-chairs.webp", alt: "Терраса с шезлонгами" },
-  { src: "/img/campfire-family.webp", alt: "Семья у костра" },
-  { src: "/img/kids-beach.webp", alt: "Дети на пляже" },
-  { src: "/img/hottub-couple-night.webp", alt: "Джакузи ночью" },
-  { src: "/img/autumn-tea.webp", alt: "Осенний чай на террасе" },
-  { src: "/img/aerial-golden.webp", alt: "Вид на территорию сверху" },
-  { src: "/img/family-pier.webp", alt: "Семья на пирсе" },
-  { src: "/img/bbq-dinner.webp", alt: "Ужин-барбекю" },
-  { src: "/img/cabins-row.webp", alt: "Домики у леса" },
-  { src: "/img/night-pier-stars.webp", alt: "Пирс под звёздами" },
+  { src: "/img/real-pier.webp", alt: "Пирс на реке Чаган" },
+  { src: "/img/real-grounds.webp", alt: "Приватная территория с вечерней подсветкой" },
+  { src: "/img/real-jacuzzi.webp", alt: "Джакузи на террасе" },
+  { src: "/img/real-hottub-barrel.webp", alt: "Купель-бочка под открытым небом" },
+  { src: "/img/real-sauna.webp", alt: "Сауна на дровах" },
+  { src: "/img/real-sauna-relax.webp", alt: "Комната отдыха с видом на бассейн" },
+  { src: "/img/real-spa-panel.webp", alt: "SPA-зона" },
+  { src: "/img/real-bbq-pergola.webp", alt: "BBQ-беседка" },
+  { src: "/img/real-kazan.webp", alt: "Казан на очаге" },
+  { src: "/img/real-living-chandelier.webp", alt: "Гостиная с люстрой" },
+  { src: "/img/real-bedroom.webp", alt: "Спальня на мансарде" },
+  { src: "/img/real-playground.webp", alt: "Детская площадка" },
 ];
 
 export const REVIEWS: { name: string; text: string; rating: number; source: string }[] = [
