@@ -9,7 +9,7 @@
 
 import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
 
-import { UNITS, type UnitId } from "@config/pricing";
+import { BOOKABLE_UNITS, type UnitId } from "@config/pricing";
 import { BOOKING_CONFIG } from "@config/booking";
 import { calcPrice } from "@/lib/pricing";
 import type { BookingStore } from "./store";
@@ -23,7 +23,7 @@ import type {
 } from "./types";
 import { isValidDate, nightsBetween } from "./dates";
 
-const HOUSE_IDS = UNITS.map((u) => u.id) as string[];
+const HOUSE_IDS = BOOKABLE_UNITS.map((u) => u.id) as string[];
 function isKnownHouse(id: string): id is UnitId {
   return HOUSE_IDS.includes(id);
 }
@@ -91,7 +91,7 @@ export class PgStore implements BookingStore {
         where from_date < ${checkout}::date and ${checkin}::date < to_date
     `;
     const busy = new Set(rows.map((r: any) => r.house_id));
-    return UNITS.map((u) => u.id).filter((id) => !busy.has(id));
+    return BOOKABLE_UNITS.map((u) => u.id).filter((id) => !busy.has(id));
   }
 
   async isHouseAvailable(

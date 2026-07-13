@@ -6,7 +6,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 
-import { UNITS, type UnitId } from "@config/pricing";
+import { BOOKABLE_UNITS, type UnitId } from "@config/pricing";
 import { BOOKING_CONFIG } from "@config/booking";
 import { calcPrice } from "@/lib/pricing";
 import type { BookingStore } from "./store";
@@ -27,7 +27,7 @@ interface DbShape {
 const DATA_DIR = path.join(process.cwd(), ".data");
 const DATA_FILE = path.join(DATA_DIR, "booking.json");
 
-const HOUSE_IDS = UNITS.map((u) => u.id);
+const HOUSE_IDS = BOOKABLE_UNITS.map((u) => u.id);
 
 function isKnownHouse(id: string): id is UnitId {
   return (HOUSE_IDS as string[]).includes(id);
@@ -90,7 +90,7 @@ export class MockStore implements BookingStore {
     checkout: string
   ): Promise<UnitId[]> {
     const db = await this.read();
-    return UNITS.map((u) => u.id).filter(
+    return BOOKABLE_UNITS.map((u) => u.id).filter(
       (id) => !this.houseBusy(db, id, checkin, checkout)
     );
   }

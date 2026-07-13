@@ -50,7 +50,7 @@ export default function Lightbox({
     >
       {/* top bar */}
       <div
-        className="flex items-center justify-between px-4 py-3 text-milk"
+        className="flex items-center justify-between bg-gradient-to-b from-black/70 to-transparent px-4 py-3 text-milk"
         onClick={(e) => e.stopPropagation()}
       >
         <span className="text-[14px] font-medium">
@@ -60,9 +60,9 @@ export default function Lightbox({
         <button
           onClick={onClose}
           aria-label="Закрыть"
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-graphite shadow-lg transition hover:bg-milk"
         >
-          <X size={20} />
+          <X size={22} />
         </button>
       </div>
 

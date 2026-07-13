@@ -8,8 +8,22 @@ type Msg = { role: "user" | "assistant"; text: string };
 const GREETING: Msg = {
   role: "assistant",
   text:
-    "Здравствуйте! 🌿 Спасибо, что выбрали зону отдыха KHAN ORDA.\n\nПодскажите, пожалуйста:\n• На какую дату хотите забронировать?\n• На сколько суток?\n• Сколько взрослых и детей?\n\nПроверю свободные даты и сразу отвечу 😊",
+    "Здравствуйте! 🌿 Я помощник KHAN ORDA. Спрошу или подскажу по отдыху — выберите вопрос ниже или напишите свой 😊",
 };
+
+// Топ-вопросы гостей — быстрые кнопки на старте.
+const SUGGESTIONS = [
+  "Сколько стоит?",
+  "Что входит в стоимость?",
+  "Свободно на выходных?",
+  "Можно с детьми?",
+  "Есть баня и джакузи?",
+  "Можно со своей едой?",
+  "Есть парковка?",
+  "Как добраться?",
+  "Как забронировать?",
+  "Можно приехать раньше?",
+];
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
@@ -22,8 +36,8 @@ export default function ChatWidget() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
   }, [messages, loading, open]);
 
-  async function send() {
-    const text = input.trim();
+  async function sendText(raw: string) {
+    const text = raw.trim();
     if (!text || loading) return;
     const next = [...messages, { role: "user" as const, text }];
     setMessages(next);
@@ -116,6 +130,20 @@ export default function ChatWidget() {
                 </div>
               </div>
             ))}
+            {/* пилюли топ-вопросов на старте */}
+            {messages.length === 1 && !loading && (
+              <div className="flex flex-wrap gap-2 pt-1">
+                {SUGGESTIONS.map((q) => (
+                  <button
+                    key={q}
+                    onClick={() => sendText(q)}
+                    className="rounded-full border border-[#d8c3a5] bg-white px-3 py-1.5 text-[12.5px] text-forest transition hover:bg-[#eef3e8]"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            )}
             {loading && (
               <div className="flex justify-start">
                 <div className="flex items-center gap-2 rounded-2xl bg-white px-3.5 py-2.5 text-[13px] text-[#8a8f84] shadow-sm">
@@ -130,13 +158,13 @@ export default function ChatWidget() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && send()}
+              onKeyDown={(e) => e.key === "Enter" && sendText(input)}
               placeholder="Спросите о датах, ценах, бронировании…"
               className="flex-1 rounded-full bg-white px-4 py-2.5 text-[14px] text-forest outline-none"
               style={{ border: "1px solid #ddd1ba" }}
             />
             <button
-              onClick={send}
+              onClick={() => sendText(input)}
               disabled={loading || !input.trim()}
               aria-label="Отправить"
               className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-copper text-milk transition hover:bg-copper-dark disabled:opacity-40"

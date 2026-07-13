@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CalendarDays, Info, Check, Minus, Plus } from "lucide-react";
-import { UNITS, ADDONS } from "@config/pricing";
+import { UNITS, BOOKABLE_UNITS, ADDONS } from "@config/pricing";
 import { useI18n } from "@/i18n/LanguageProvider";
 import { useCalculator } from "@/context/CalculatorContext";
 import { fmtCur, nightsWord } from "@/lib/format";
@@ -63,7 +63,7 @@ export default function Calculator() {
               {t.calc.unit}
             </label>
             <div className="mb-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
-              {UNITS.map((u) => {
+              {BOOKABLE_UNITS.map((u) => {
                 const on = u.id === unitId;
                 return (
                   <button

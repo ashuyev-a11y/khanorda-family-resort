@@ -39,6 +39,7 @@ export interface Unit {
   holidayPrice?: number;
   image: string; // путь в /public/img
   features: string[];
+  comingSoon?: boolean; // дом ещё готовится — показываем «Скоро», бронь недоступна
 }
 
 // Комплекс из 4 одинаковых домов A-Frame «всё включено» на одной приватной
@@ -54,11 +55,15 @@ const HOUSE = {
 };
 
 export const UNITS: Unit[] = [
-  { id: "house1", name: "A-Frame №1", image: "/img/real-exterior.webp", ...HOUSE },
-  { id: "house2", name: "A-Frame №2", image: "/img/real-living-wide.webp", ...HOUSE },
-  { id: "house3", name: "A-Frame №3", image: "/img/real-pier.webp", ...HOUSE },
-  { id: "house4", name: "A-Frame №4", image: "/img/real-grounds.webp", ...HOUSE },
+  { id: "house1", name: "A-Frame №1", image: "/img/ph-8844.webp", ...HOUSE },
+  { id: "house2", name: "A-Frame №2", image: "/img/ph-8844.webp", ...HOUSE },
+  { id: "house3", name: "A-Frame №3", image: "/img/ph-8844.webp", comingSoon: true, ...HOUSE },
+  { id: "house4", name: "A-Frame №4", image: "/img/ph-8844.webp", comingSoon: true, ...HOUSE },
 ];
+
+// Дома, доступные для брони (без «скоро»). Используется в калькуляторе,
+// проверке доступности и ИИ-агенте.
+export const BOOKABLE_UNITS = UNITS.filter((u) => !u.comingSoon);
 
 // ----------------------------------------------------------------------------
 //  ДОПОЛНИТЕЛЬНЫЕ УСЛУГИ

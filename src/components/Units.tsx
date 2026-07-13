@@ -35,6 +35,11 @@ export default function Units() {
                     <Users size={11} className="mr-1 inline align-middle" />
                     {t.units.capacity}: {u.capacity}
                   </span>
+                  {u.comingSoon && (
+                    <span className="pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2 rounded-full bg-copper px-3 py-1.5 text-[11px] font-bold text-milk shadow">
+                      Скоро
+                    </span>
+                  )}
                 </div>
                 <div className="flex flex-1 flex-col p-6">
                   <h3 className="font-display text-[26px] text-forest">{u.name}</h3>
@@ -61,13 +66,19 @@ export default function Units() {
                       </div>
                     </div>
                   </div>
-                  <button
-                    onClick={() => selectUnitAndScroll(u.id)}
-                    className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-forest px-5 py-3.5 text-sm font-semibold text-milk transition hover:bg-pine"
-                  >
-                    {t.units.select}
-                    <ArrowRight size={16} />
-                  </button>
+                  {u.comingSoon ? (
+                    <div className="mt-4 inline-flex items-center justify-center rounded-xl bg-[#ece3d2] px-5 py-3.5 text-sm font-semibold text-[#9a9384]">
+                      Открытие скоро
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => selectUnitAndScroll(u.id)}
+                      className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-forest px-5 py-3.5 text-sm font-semibold text-milk transition hover:bg-pine"
+                    >
+                      {t.units.select}
+                      <ArrowRight size={16} />
+                    </button>
+                  )}
                 </div>
               </article>
             </Reveal>

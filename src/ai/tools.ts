@@ -3,7 +3,7 @@
 // бронированию на сайте/в WhatsApp.
 
 import { getStore } from "@/booking/store";
-import { UNITS } from "@config/pricing";
+import { BOOKABLE_UNITS } from "@config/pricing";
 import { calcPrice } from "@/lib/pricing";
 import { nightsWord } from "@/lib/format";
 
@@ -24,7 +24,7 @@ export const toolDeclarations = [
   },
 ];
 
-const HOUSE_NAME = new Map(UNITS.map((u) => [u.id as string, u.name]));
+const HOUSE_NAME = new Map(BOOKABLE_UNITS.map((u) => [u.id as string, u.name]));
 
 type Args = Record<string, unknown>;
 
@@ -32,7 +32,7 @@ export async function executeTool(name: string, args: Args): Promise<unknown> {
   if (name === "check_availability") {
     const checkin = String(args.checkin ?? "");
     const checkout = String(args.checkout ?? "");
-    const calc = calcPrice(UNITS[0].id, checkin, checkout, []);
+    const calc = calcPrice(BOOKABLE_UNITS[0].id, checkin, checkout, []);
     if (!calc.valid) return { error: calc.error ?? "Некорректные даты" };
     const store = await getStore();
     const freeIds = await store.availableHousesFor(checkin, checkout);
@@ -44,7 +44,7 @@ export async function executeTool(name: string, args: Args): Promise<unknown> {
       status: freeIds.length > 0 ? "свободно" : "занято",
       freeHousesCount: freeIds.length,
       freeHouses: freeIds.map((id) => ({ id, name: HOUSE_NAME.get(id) })),
-      totalHouses: UNITS.length,
+      totalHouses: BOOKABLE_UNITS.length,
     };
   }
 

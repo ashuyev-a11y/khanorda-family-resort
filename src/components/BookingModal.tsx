@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, Check, Info, Loader2, ShieldCheck } from "lucide-react";
+import { X, Check, Info, Loader2, ShieldCheck, MessageCircle } from "lucide-react";
 import { UNITS } from "@config/pricing";
+import { CONTACT } from "@/data/content";
 import { useCalculator } from "@/context/CalculatorContext";
 import { fmtCur, nightsWord } from "@/lib/format";
 
@@ -76,9 +77,13 @@ export default function BookingModal({
 
   const selectedFree = avail?.houses.find((h) => h.id === unitId)?.available;
   const freeHouses = avail?.houses.filter((h) => h.available) ?? [];
+  // Блокируем отправку ТОЛЬКО если точно знаем, что занято. Если проверка
+  // доступности ещё не загрузилась/сбойнула — не блокируем: сервер валидирует
+  // занятость атомарно и вернёт ошибку, если что.
+  const knownOccupied = avail != null && selectedFree === false;
   const canSubmit =
     result.valid &&
-    selectedFree &&
+    !knownOccupied &&
     name.trim().length > 1 &&
     phone.trim().length > 4 &&
     consent &&
@@ -307,13 +312,13 @@ export default function BookingModal({
                   <Info size={15} /> Слот закреплён на {payment.holdMinutes} мин
                 </div>
                 <p className="mt-1.5">
-                  Оплатите предоплату 100% в Kaspi. После поступления оплаты
-                  администратор подтвердит бронь, и даты закрепятся за вами. Мы
-                  свяжемся с вами по указанному телефону.
+                  Напишите нам в WhatsApp — пришлём реквизиты Kaspi для
+                  предоплаты 100%. После оплаты администратор подтвердит бронь, и
+                  даты закрепятся за вами.
                 </p>
               </div>
 
-              {payment.kaspiPayUrl ? (
+              {payment.kaspiPayUrl && (
                 <a
                   href={payment.kaspiPayUrl}
                   target="_blank"
@@ -322,18 +327,29 @@ export default function BookingModal({
                 >
                   Оплатить в Kaspi · {fmtCur(payment.amount)}
                 </a>
-              ) : (
-                <div className="mt-4 rounded-xl border border-dashed border-[#c9a06f] p-4 text-center text-[13px] text-[#8B6849]">
-                  Здесь появится кнопка оплаты Kaspi Pay.
-                  <br />
-                  Пока идёт настройка — администратор свяжется с вами и пришлёт
-                  реквизиты для оплаты.
-                </div>
               )}
+
+              {/* WhatsApp с данными брони — гость подтверждает/оплачивает */}
+              <a
+                href={`${CONTACT.whatsapp}?text=${encodeURIComponent(
+                  `Здравствуйте! Бронь №${booking.id.slice(0, 8)}.\n` +
+                    `Дом: ${UNITS.find((u) => u.id === booking.houseId)?.name}\n` +
+                    `Даты: ${booking.checkin} → ${booking.checkout}\n` +
+                    `Гостей: ${guests}\n` +
+                    `К оплате (100%): ${fmtCur(payment.amount)}\n` +
+                    `Имя: ${name}\nТелефон: ${phone}\n` +
+                    `Хочу оплатить и подтвердить бронь.`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3.5 text-[15px] font-bold text-white transition hover:opacity-90"
+              >
+                <MessageCircle size={18} /> Написать в WhatsApp
+              </a>
 
               <button
                 onClick={onClose}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-forest py-3 text-[14px] font-semibold text-milk"
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-forest/10 py-3 text-[14px] font-semibold text-forest"
               >
                 <Check size={16} /> Готово
               </button>

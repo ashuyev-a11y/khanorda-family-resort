@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { UNITS } from "@config/pricing";
+import { UNITS, BOOKABLE_UNITS } from "@config/pricing";
 import { fmtCur } from "@/lib/format";
 import type { Booking, BlockedRange } from "@/booking/types";
 
@@ -31,7 +31,7 @@ export default function AdminPage() {
   const [busy, setBusy] = useState(false);
 
   // форма блокировки
-  const [blkHouse, setBlkHouse] = useState(UNITS[0].id);
+  const [blkHouse, setBlkHouse] = useState(BOOKABLE_UNITS[0].id);
   const [blkFrom, setBlkFrom] = useState("");
   const [blkTo, setBlkTo] = useState("");
   const [blkReason, setBlkReason] = useState("");
@@ -245,7 +245,7 @@ export default function AdminPage() {
               className="rounded-lg bg-[#faf7f0] px-3 py-2.5 text-[14px]"
               style={{ border: "1px solid #ddd1ba" }}
             >
-              {UNITS.map((u) => (
+              {BOOKABLE_UNITS.map((u) => (
                 <option key={u.id} value={u.id}>
                   {u.name}
                 </option>

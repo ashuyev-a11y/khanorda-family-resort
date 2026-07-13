@@ -90,18 +90,22 @@ export const HOUSE_PHOTOS = [
 ];
 
 export const GALLERY: { src: string; alt: string }[] = [
-  { src: "/img/real-pier.webp", alt: "Пирс на реке Чаган" },
-  { src: "/img/real-grounds.webp", alt: "Приватная территория с вечерней подсветкой" },
-  { src: "/img/real-jacuzzi.webp", alt: "Джакузи на террасе" },
-  { src: "/img/real-hottub-barrel.webp", alt: "Купель-бочка под открытым небом" },
-  { src: "/img/real-sauna.webp", alt: "Сауна на дровах" },
-  { src: "/img/real-sauna-relax.webp", alt: "Комната отдыха с видом на бассейн" },
-  { src: "/img/real-spa-panel.webp", alt: "SPA-зона" },
-  { src: "/img/real-bbq-pergola.webp", alt: "BBQ-беседка" },
-  { src: "/img/real-kazan.webp", alt: "Казан на очаге" },
-  { src: "/img/real-living-chandelier.webp", alt: "Гостиная с люстрой" },
-  { src: "/img/real-bedroom.webp", alt: "Спальня на мансарде" },
-  { src: "/img/real-playground.webp", alt: "Детская площадка" },
+  { src: "/img/ph-8844.webp", alt: "Дом A-Frame с купелью" },
+  { src: "/img/ph-8848.webp", alt: "Пирс на реке Чаган" },
+  { src: "/img/ph-8849.webp", alt: "Джакузи с подогревом" },
+  { src: "/img/ph-8857.webp", alt: "Гостиная-столовая" },
+  { src: "/img/ph-8868.webp", alt: "Гостиная с люстрой" },
+  { src: "/img/ph-8863.webp", alt: "Спальня на мансарде" },
+  { src: "/img/ph-8891.webp", alt: "Парная" },
+  { src: "/img/ph-8885.webp", alt: "Банная печь" },
+  { src: "/img/ph-8887.webp", alt: "Беседка" },
+  { src: "/img/ph-8873.webp", alt: "Мангальная зона" },
+  { src: "/img/ph-8888.webp", alt: "Очаг с казаном" },
+  { src: "/img/ph-8850.webp", alt: "Детская площадка" },
+  { src: "/img/ph-8846.webp", alt: "Закрытая территория" },
+  { src: "/img/ph-8858.webp", alt: "Кухня" },
+  { src: "/img/ph-8865.webp", alt: "Спальня" },
+  { src: "/img/ph-8877.webp", alt: "Санузел" },
 ];
 
 export const REVIEWS: { name: string; text: string; rating: number; source: string }[] = [
