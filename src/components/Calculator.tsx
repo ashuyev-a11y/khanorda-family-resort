@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { CalendarDays, Info, Check, Minus, Plus } from "lucide-react";
 import { UNITS, ADDONS } from "@config/pricing";
-import { CONTACT } from "@/data/content";
 import { useI18n } from "@/i18n/LanguageProvider";
 import { useCalculator } from "@/context/CalculatorContext";
 import { fmtCur, nightsWord } from "@/lib/format";
 import SectionHead from "./SectionHead";
+import BookingModal from "./BookingModal";
 
 export default function Calculator() {
   const { t } = useI18n();
@@ -26,7 +26,7 @@ export default function Calculator() {
   } = useCalculator();
 
   const [today, setToday] = useState("");
-  const [showSummary, setShowSummary] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
 
   useEffect(() => {
     const d = new Date();
@@ -43,14 +43,6 @@ export default function Calculator() {
   useEffect(() => {
     if (guests > maxGuests) setGuests(maxGuests);
   }, [maxGuests, guests, setGuests]);
-
-  const waText = result.valid
-    ? encodeURIComponent(
-        `Здравствуйте! Хочу забронировать «${unit.name}» с ${checkin} по ${checkout}, ${guests} гостей. Итог по калькулятору: ${fmtCur(
-          result.total
-        )}.`
-      )
-    : "";
 
   return (
     <section id="calc" className="scroll-mt-20 bg-[#EFE7D7] py-16 sm:py-24">
@@ -263,38 +255,11 @@ export default function Calculator() {
                 </div>
 
                 <button
-                  onClick={() => setShowSummary((v) => !v)}
+                  onClick={() => setBookingOpen(true)}
                   className="mt-5 w-full rounded-xl bg-copper py-3.5 text-[15px] font-bold text-milk transition hover:bg-copper-dark"
                 >
                   {t.calc.book}
                 </button>
-
-                {showSummary && (
-                  <div
-                    className="mt-3 rounded-2xl p-4 text-[13.5px] leading-relaxed"
-                    style={{
-                      background: "rgba(246,242,235,.06)",
-                      border: "1px solid rgba(216,195,165,.18)",
-                    }}
-                  >
-                    <div className="mb-2 font-semibold text-[#D8C3A5]">
-                      {unit.name} · {checkin} → {checkout}
-                    </div>
-                    <div className="text-milk/80">
-                      {result.nights} {nightsWord(result.nights)}, {guests}{" "}
-                      {t.calc.guests.toLowerCase()} · {t.calc.total}:{" "}
-                      <b>{fmtCur(result.total)}</b>
-                    </div>
-                    <a
-                      href={`${CONTACT.whatsapp}?text=${waText}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-3 block rounded-xl bg-[#eef3e8] py-3 text-center text-[14px] font-semibold text-forest"
-                    >
-                      {t.common.whatsapp}
-                    </a>
-                  </div>
-                )}
 
                 <p className="mt-3 text-[12px] leading-relaxed text-milk/50">
                   {t.calc.note}
@@ -304,6 +269,8 @@ export default function Calculator() {
           </div>
         </div>
       </div>
+
+      <BookingModal open={bookingOpen} onClose={() => setBookingOpen(false)} />
     </section>
   );
 }

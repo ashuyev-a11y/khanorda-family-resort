@@ -87,7 +87,7 @@ export const ADDONS: Addon[] = [
 //  ОБЩИЕ НАСТРОЙКИ КАЛЬКУЛЯТОРА
 // ----------------------------------------------------------------------------
 export const BOOKING = {
-  prepaymentPct: 30, // предоплата, %
+  prepaymentPct: 100, // предоплата, % (заказчик: 100% — вся сумма вперёд, невозвратна)
   defaultUnitId: "house1" as UnitId,
   minNights: 1,
 };
