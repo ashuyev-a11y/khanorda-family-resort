@@ -61,6 +61,16 @@ export default function Footer() {
                     WhatsApp
                   </a>
                 </li>
+                <li>
+                  <a
+                    href={CONTACT.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-milk"
+                  >
+                    Instagram
+                  </a>
+                </li>
                 <li>{CONTACT.city}</li>
               </ul>
             </div>

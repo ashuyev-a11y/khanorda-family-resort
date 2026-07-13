@@ -3,27 +3,36 @@
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle, X, Send, Loader2 } from "lucide-react";
 
-type Msg = { role: "user" | "assistant"; text: string };
-
-const GREETING: Msg = {
-  role: "assistant",
-  text:
-    "Здравствуйте! 🌿 Я помощник KHAN ORDA. Спрошу или подскажу по отдыху — выберите вопрос ниже или напишите свой 😊",
-};
+type Msg = { role: "user" | "assistant"; text: string; suggestions?: string[] };
 
 // Топ-вопросы гостей — быстрые кнопки на старте.
-const SUGGESTIONS = [
+const START_SUGGESTIONS = [
   "Сколько стоит?",
   "Что входит в стоимость?",
   "Свободно на выходных?",
   "Можно с детьми?",
   "Есть баня и джакузи?",
-  "Можно со своей едой?",
-  "Есть парковка?",
-  "Как добраться?",
   "Как забронировать?",
-  "Можно приехать раньше?",
 ];
+
+const GREETING: Msg = {
+  role: "assistant",
+  text:
+    "Здравствуйте! 🌿 Я помощник KHAN ORDA. Подскажу по отдыху и проверю свободные даты. Что вас интересует?",
+  suggestions: START_SUGGESTIONS,
+};
+
+// Из ответа модели вытаскиваем строку «ВАРИАНТЫ: … | … | …» → пилюли.
+function parseReply(raw: string): { text: string; suggestions: string[] } {
+  const m = raw.match(/ВАРИАНТЫ:\s*(.+?)\s*$/im);
+  if (!m || m.index === undefined) return { text: raw.trim(), suggestions: [] };
+  const suggestions = m[1]
+    .split("|")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .slice(0, 4);
+  return { text: raw.slice(0, m.index).trim(), suggestions };
+}
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
@@ -50,12 +59,12 @@ export default function ChatWidget() {
         body: JSON.stringify({ messages: next }),
       });
       const data = await res.json();
+      const { text: reply, suggestions } = parseReply(
+        data.reply || "Извините, попробуйте ещё раз."
+      );
       setMessages((m) => [
         ...m,
-        {
-          role: "assistant",
-          text: data.reply || "Извините, попробуйте ещё раз.",
-        },
+        { role: "assistant", text: reply, suggestions },
       ]);
     } catch {
       setMessages((m) => [
@@ -130,20 +139,27 @@ export default function ChatWidget() {
                 </div>
               </div>
             ))}
-            {/* пилюли топ-вопросов на старте */}
-            {messages.length === 1 && !loading && (
-              <div className="flex flex-wrap gap-2 pt-1">
-                {SUGGESTIONS.map((q) => (
-                  <button
-                    key={q}
-                    onClick={() => sendText(q)}
-                    className="rounded-full border border-[#d8c3a5] bg-white px-3 py-1.5 text-[12.5px] text-forest transition hover:bg-[#eef3e8]"
-                  >
-                    {q}
-                  </button>
-                ))}
-              </div>
-            )}
+            {/* контекстные пилюли под последним ответом */}
+            {!loading &&
+              (() => {
+                const last = messages[messages.length - 1];
+                const sug =
+                  last?.role === "assistant" ? last.suggestions : undefined;
+                if (!sug?.length) return null;
+                return (
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {sug.map((q) => (
+                      <button
+                        key={q}
+                        onClick={() => sendText(q)}
+                        className="rounded-full border border-[#d8c3a5] bg-white px-3 py-1.5 text-[12.5px] text-forest transition hover:bg-[#eef3e8]"
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
+                );
+              })()}
             {loading && (
               <div className="flex justify-start">
                 <div className="flex items-center gap-2 rounded-2xl bg-white px-3.5 py-2.5 text-[13px] text-[#8a8f84] shadow-sm">

@@ -4,7 +4,7 @@ export const CONTACT = {
   phone: "+7 701 777 73 66",
   phoneHref: "tel:+77017777366",
   whatsapp: "https://wa.me/77017777366",
-  instagram: "https://instagram.com/",
+  instagram: "https://www.instagram.com/khanorda_uralsk",
   city: "Уральск, ЗКО",
 };
 
