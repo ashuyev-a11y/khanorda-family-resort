@@ -23,10 +23,12 @@ export default function Calculator() {
     setGuests,
     toggleAddon,
     result,
+    bookingOpen,
+    openBooking,
+    closeBooking,
   } = useCalculator();
 
   const [today, setToday] = useState("");
-  const [bookingOpen, setBookingOpen] = useState(false);
 
   useEffect(() => {
     const d = new Date();
@@ -255,7 +257,7 @@ export default function Calculator() {
                 </div>
 
                 <button
-                  onClick={() => setBookingOpen(true)}
+                  onClick={openBooking}
                   className="mt-5 w-full rounded-xl bg-copper py-3.5 text-[15px] font-bold text-milk transition hover:bg-copper-dark"
                 >
                   {t.calc.book}
@@ -270,7 +272,7 @@ export default function Calculator() {
         </div>
       </div>
 
-      <BookingModal open={bookingOpen} onClose={() => setBookingOpen(false)} />
+      <BookingModal open={bookingOpen} onClose={closeBooking} />
     </section>
   );
 }

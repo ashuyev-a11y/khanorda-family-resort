@@ -23,7 +23,18 @@ type CalculatorContextValue = {
   toggleAddon: (id: AddonId) => void;
   selectUnitAndScroll: (id: UnitId) => void;
   result: CalcResult;
+  bookingOpen: boolean;
+  openBooking: () => void;
+  closeBooking: () => void;
 };
+
+function scrollToCalc() {
+  const el = document.getElementById("calc");
+  if (el) {
+    const y = el.getBoundingClientRect().top + window.scrollY - 72;
+    window.scrollTo({ top: y, behavior: "smooth" });
+  }
+}
 
 const CalculatorContext = createContext<CalculatorContextValue | null>(null);
 
@@ -33,6 +44,7 @@ export function CalculatorProvider({ children }: { children: React.ReactNode }) 
   const [checkout, setCheckout] = useState("");
   const [guests, setGuests] = useState(2);
   const [addons, setAddons] = useState<AddonId[]>([]);
+  const [bookingOpen, setBookingOpen] = useState(false);
 
   const toggleAddon = useCallback((id: AddonId) => {
     setAddons((prev) =>
@@ -56,6 +68,14 @@ export function CalculatorProvider({ children }: { children: React.ReactNode }) 
     [unitId, checkin, checkout, addons]
   );
 
+  // Любая кнопка «Забронировать» (шапка/hero/мобайл/калькулятор) ведёт сюда:
+  // если даты выбраны — открываем модалку, иначе прокручиваем к калькулятору.
+  const openBooking = useCallback(() => {
+    if (result.valid) setBookingOpen(true);
+    else scrollToCalc();
+  }, [result.valid]);
+  const closeBooking = useCallback(() => setBookingOpen(false), []);
+
   const value: CalculatorContextValue = {
     unitId,
     checkin,
@@ -69,6 +89,9 @@ export function CalculatorProvider({ children }: { children: React.ReactNode }) 
     toggleAddon,
     selectUnitAndScroll,
     result,
+    bookingOpen,
+    openBooking,
+    closeBooking,
   };
 
   return (

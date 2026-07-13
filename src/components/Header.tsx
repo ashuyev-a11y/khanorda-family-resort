@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useI18n } from "@/i18n/LanguageProvider";
+import { useCalculator } from "@/context/CalculatorContext";
 import LanguageToggle from "./LanguageToggle";
 
 export default function Header() {
   const { t } = useI18n();
+  const { openBooking } = useCalculator();
   const [solid, setSolid] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -74,12 +76,12 @@ export default function Header() {
 
         <div className="flex items-center gap-3">
           <LanguageToggle dark={!solid} />
-          <a
-            href="#calc"
+          <button
+            onClick={openBooking}
             className="hidden sm:inline-flex rounded-full bg-copper px-5 py-2.5 text-sm font-semibold text-milk transition-colors hover:bg-copper-dark"
           >
             {t.nav.book}
-          </a>
+          </button>
           <button
             className="lg:hidden flex h-11 w-11 items-center justify-center rounded-xl"
             aria-label="Menu"

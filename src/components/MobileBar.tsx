@@ -3,10 +3,12 @@
 import { MessageCircle } from "lucide-react";
 import { CONTACT } from "@/data/content";
 import { useI18n } from "@/i18n/LanguageProvider";
+import { useCalculator } from "@/context/CalculatorContext";
 
 /** Fixed bottom action bar on phones (≤860px, hidden above via CSS). */
 export default function MobileBar() {
   const { t } = useI18n();
+  const { openBooking } = useCalculator();
   return (
     <div
       className="fixed inset-x-0 bottom-0 z-50 hidden max-[860px]:flex"
@@ -20,12 +22,12 @@ export default function MobileBar() {
         boxShadow: "0 -6px 24px rgba(30,30,28,.1)",
       }}
     >
-      <a
-        href="#calc"
+      <button
+        onClick={openBooking}
         className="flex-1 rounded-xl bg-copper py-3.5 text-center text-[16px] font-bold text-milk"
       >
         {t.hero.cta}
-      </a>
+      </button>
       <a
         href={CONTACT.whatsapp}
         target="_blank"

@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 import { useI18n } from "@/i18n/LanguageProvider";
+import { useCalculator } from "@/context/CalculatorContext";
 
 export default function Hero() {
   const { t } = useI18n();
+  const { openBooking } = useCalculator();
   return (
     <section
       id="top"
@@ -72,13 +74,13 @@ export default function Hero() {
         </p>
 
         <div className="mb-9 flex flex-wrap gap-3">
-          <a
-            href="#calc"
+          <button
+            onClick={openBooking}
             className="rounded-xl bg-copper px-7 py-4 text-base font-semibold text-milk transition hover:bg-copper-dark"
             style={{ boxShadow: "0 14px 34px rgba(198,123,82,.45)" }}
           >
             {t.hero.cta}
-          </a>
+          </button>
           <a
             href="#units"
             className="rounded-xl px-7 py-4 text-base font-semibold text-milk transition hover:bg-white/10"
