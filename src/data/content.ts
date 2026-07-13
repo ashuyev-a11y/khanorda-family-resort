@@ -22,19 +22,71 @@ export const MAP = {
   caption: "Khan Orda на карте — берег реки Чаган, 20 минут от Уральска.",
 };
 
-export const AMENITIES: { icon: string; label: string }[] = [
-  { icon: "Flame", label: "Баня на дровах" },
-  { icon: "Snowflake", label: "Купель с ледяной водой" },
-  { icon: "Waves", label: "Джакузи на террасе" },
-  { icon: "Beef", label: "Беседка с мангалом" },
-  { icon: "Baby", label: "Детская игровая площадка" },
-  { icon: "Anchor", label: "Выход к реке с пирсом" },
-  { icon: "Tent", label: "Придомовая территория" },
-  { icon: "Utensils", label: "Казан и коптильня" },
-  { icon: "Umbrella", label: "Пляж на реке Чаган" },
-  { icon: "Mic", label: "Караоке" },
-  { icon: "BedDouble", label: "Халаты и полотенца" },
-  { icon: "Coffee", label: "Посуда и всё для отдыха" },
+// Удобства раздела «Что входит». photos — карусель по клику на карточку.
+export const AMENITIES: { icon: string; label: string; photos: string[] }[] = [
+  {
+    icon: "Home",
+    label: "Дом до 16 гостей",
+    photos: [
+      "/img/ph-8857.webp",
+      "/img/ph-8867.webp",
+      "/img/ph-8868.webp",
+      "/img/ph-8853.webp",
+      "/img/ph-8863.webp",
+      "/img/ph-8865.webp",
+      "/img/ph-8858.webp",
+      "/img/ph-8877.webp",
+    ],
+  },
+  {
+    icon: "Flame",
+    label: "Баня на дровах",
+    photos: [
+      "/img/ph-8891.webp",
+      "/img/ph-8892.webp",
+      "/img/ph-8885.webp",
+      "/img/ph-8881.webp",
+      "/img/ph-8879.webp",
+      "/img/ph-8890.webp",
+      "/img/ph-8883.webp",
+    ],
+  },
+  {
+    icon: "Snowflake",
+    label: "Купель с ледяной водой",
+    photos: ["/img/ph-8844.webp", "/img/ph-8845.webp"],
+  },
+  { icon: "Waves", label: "Джакузи с подогревом", photos: ["/img/ph-8849.webp"] },
+  {
+    icon: "Beef",
+    label: "Мангальная зона",
+    photos: ["/img/ph-8887.webp", "/img/ph-8873.webp", "/img/ph-8889.webp"],
+  },
+  { icon: "Utensils", label: "Очаг с казаном", photos: ["/img/ph-8888.webp"] },
+  {
+    icon: "Baby",
+    label: "Детская игровая площадка",
+    photos: ["/img/ph-8850.webp"],
+  },
+  {
+    icon: "Anchor",
+    label: "Выход к реке с пирсом",
+    photos: ["/img/ph-8848.webp", "/img/ph-8847.webp"],
+  },
+  { icon: "Trees", label: "Закрытая территория", photos: ["/img/ph-8846.webp"] },
+  { icon: "Car", label: "Бесплатная парковка", photos: [] },
+];
+
+// Фото для каруселей домов (дома одинаковые — общий набор-тур).
+export const HOUSE_PHOTOS = [
+  "/img/ph-8844.webp", // экстерьер + купель
+  "/img/ph-8857.webp", // гостиная-столовая
+  "/img/ph-8868.webp", // гостиная
+  "/img/ph-8863.webp", // спальня
+  "/img/ph-8865.webp", // спальня
+  "/img/ph-8849.webp", // джакузи
+  "/img/ph-8848.webp", // пирс на реке
+  "/img/ph-8877.webp", // санузел
 ];
 
 export const GALLERY: { src: string; alt: string }[] = [

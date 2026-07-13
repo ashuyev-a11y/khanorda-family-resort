@@ -1,13 +1,14 @@
 "use client";
 
-import Image from "next/image";
 import { Users, ArrowRight } from "lucide-react";
 import { UNITS } from "@config/pricing";
+import { HOUSE_PHOTOS } from "@/data/content";
 import { useI18n } from "@/i18n/LanguageProvider";
 import { useCalculator } from "@/context/CalculatorContext";
 import { fmt } from "@/lib/format";
 import Reveal from "./Reveal";
 import SectionHead from "./SectionHead";
+import Carousel from "./Carousel";
 
 export default function Units() {
   const { t } = useI18n();
@@ -25,16 +26,10 @@ export default function Units() {
           {UNITS.map((u, i) => (
             <Reveal key={u.id} delay={i * 80}>
               <article className="flex h-full flex-col overflow-hidden rounded-3xl bg-white shadow-[0_16px_40px_rgba(30,30,28,.08)]">
-                <div className="relative aspect-[4/3]">
-                  <Image
-                    src={u.image}
-                    alt={u.name}
-                    fill
-                    sizes="(max-width:768px) 100vw, 380px"
-                    className="object-cover"
-                  />
+                <div className="relative">
+                  <Carousel images={HOUSE_PHOTOS} alt={u.name} title={u.name} />
                   <span
-                    className="eyebrow absolute left-3 top-3 rounded-full px-3 py-1.5 text-[10px]"
+                    className="eyebrow pointer-events-none absolute left-3 top-3 z-10 rounded-full px-3 py-1.5 text-[10px]"
                     style={{ background: "rgba(30,30,28,.55)", color: "#F6F2EB", letterSpacing: 1.5 }}
                   >
                     <Users size={11} className="mr-1 inline align-middle" />
