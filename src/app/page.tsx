@@ -11,6 +11,7 @@ import Location from "@/components/Location";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
 import MobileBar from "@/components/MobileBar";
+import ChatWidget from "@/components/ChatWidget";
 
 export default function Home() {
   return (
@@ -29,6 +30,7 @@ export default function Home() {
       </main>
       <Footer />
       <MobileBar />
+      <ChatWidget />
     </CalculatorProvider>
   );
 }
