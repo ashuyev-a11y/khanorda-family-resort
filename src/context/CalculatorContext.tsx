@@ -29,11 +29,12 @@ type CalculatorContextValue = {
 };
 
 function scrollToCalc() {
-  const el = document.getElementById("calc");
-  if (el) {
-    const y = el.getBoundingClientRect().top + window.scrollY - 72;
-    window.scrollTo({ top: y, behavior: "smooth" });
-  }
+  // scrollIntoView, НЕ window.scrollTo — на этой странице window.scrollTo не
+  // срабатывает (scroll-behavior:smooth на html). Отступ под шапку даёт
+  // класс scroll-mt-20 на секции #calc.
+  document
+    .getElementById("calc")
+    ?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 const CalculatorContext = createContext<CalculatorContextValue | null>(null);
@@ -56,11 +57,7 @@ export function CalculatorProvider({ children }: { children: React.ReactNode }) 
 
   const selectUnitAndScroll = useCallback((id: UnitId) => {
     setUnitId(id);
-    const el = document.getElementById("calc");
-    if (el) {
-      const y = el.getBoundingClientRect().top + window.scrollY - 72;
-      window.scrollTo({ top: y, behavior: "smooth" });
-    }
+    scrollToCalc();
   }, []);
 
   const result = useMemo(
