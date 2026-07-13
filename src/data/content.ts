@@ -1,9 +1,9 @@
 // Content lists for the landing (RU). Extend to i18n later if needed.
 
 export const CONTACT = {
-  phone: "+7 700 000 00 00",
-  phoneHref: "tel:+77000000000",
-  whatsapp: "https://wa.me/77000000000",
+  phone: "+7 701 777 73 66",
+  phoneHref: "tel:+77017777366",
+  whatsapp: "https://wa.me/77017777366",
   instagram: "https://instagram.com/",
   city: "Уральск, ЗКО",
 };
