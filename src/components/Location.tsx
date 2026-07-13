@@ -1,7 +1,7 @@
 "use client";
 
 import { MapPin, Route, Phone, MessageCircle } from "lucide-react";
-import { CONTACT } from "@/data/content";
+import { CONTACT, MAP } from "@/data/content";
 import { useI18n } from "@/i18n/LanguageProvider";
 import Reveal from "./Reveal";
 import SectionHead from "./SectionHead";
@@ -59,16 +59,20 @@ export default function Location() {
           </Reveal>
 
           <Reveal
-            className="relative flex min-h-[280px] items-center justify-center overflow-hidden rounded-3xl"
-            style={{
-              background:
-                "repeating-linear-gradient(45deg,rgba(246,242,235,.05),rgba(246,242,235,.05) 12px,rgba(246,242,235,.02) 12px,rgba(246,242,235,.02) 24px)",
-              border: "1px solid rgba(216,195,165,.2)",
-            }}
+            className="relative flex min-h-[300px] flex-col overflow-hidden rounded-3xl"
+            style={{ border: "1px solid rgba(216,195,165,.2)" }}
           >
-            <div className="flex flex-col items-center gap-2 text-milk/60">
-              <MapPin size={30} className="text-copper" />
-              <span className="eyebrow text-[11px]">{t.location.mapNote}</span>
+            <iframe
+              src={MAP.embedSrc}
+              title={t.location.title}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+              className="h-full min-h-[300px] w-full flex-1 border-0"
+            />
+            <div className="flex items-center gap-2 bg-graphite/80 px-4 py-2.5 text-[12.5px] text-milk/80">
+              <MapPin size={14} className="flex-none text-copper" />
+              {MAP.caption}
             </div>
           </Reveal>
         </div>
