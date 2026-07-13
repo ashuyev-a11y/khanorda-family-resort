@@ -141,9 +141,23 @@ export default function BookingModal({
         </div>
 
         {!result.valid ? (
-          <p className="rounded-2xl bg-white p-4 text-[14px] text-[#6b6f66]">
-            Выберите даты заезда и выезда в калькуляторе, чтобы забронировать.
-          </p>
+          <div className="rounded-2xl bg-white p-5">
+            <p className="text-[14px] leading-relaxed text-[#6b6f66]">
+              Чтобы забронировать, сначала выберите даты заезда и выезда в
+              калькуляторе.
+            </p>
+            <button
+              onClick={() => {
+                onClose();
+                document
+                  .getElementById("calc")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              className="mt-4 w-full rounded-xl bg-forest py-3 text-[14px] font-semibold text-milk transition hover:bg-pine"
+            >
+              Выбрать даты
+            </button>
+          </div>
         ) : step === "form" ? (
           <>
             {/* сводка */}

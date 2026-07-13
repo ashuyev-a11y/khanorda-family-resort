@@ -65,12 +65,10 @@ export function CalculatorProvider({ children }: { children: React.ReactNode }) 
     [unitId, checkin, checkout, addons]
   );
 
-  // Любая кнопка «Забронировать» (шапка/hero/мобайл/калькулятор) ведёт сюда:
-  // если даты выбраны — открываем модалку, иначе прокручиваем к калькулятору.
-  const openBooking = useCallback(() => {
-    if (result.valid) setBookingOpen(true);
-    else scrollToCalc();
-  }, [result.valid]);
+  // Любая кнопка «Забронировать» (шапка/hero/мобайл/калькулятор) всегда
+  // открывает модалку — гарантированная обратная связь. Если даты не выбраны,
+  // модалка показывает подсказку выбрать даты (+ кнопку перейти к калькулятору).
+  const openBooking = useCallback(() => setBookingOpen(true), []);
   const closeBooking = useCallback(() => setBookingOpen(false), []);
 
   const value: CalculatorContextValue = {
