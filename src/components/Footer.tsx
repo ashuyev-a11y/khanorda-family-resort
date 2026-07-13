@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { CONTACT } from "@/data/content";
 import { useI18n } from "@/i18n/LanguageProvider";
 import LanguageToggle from "./LanguageToggle";
@@ -66,8 +67,13 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-white/10 pt-6 text-[12.5px] text-[#6b7062]">
-          {t.footer.rights} · {t.footer.tagline}
+        <div className="mt-10 flex flex-col gap-2 border-t border-white/10 pt-6 text-[12.5px] text-[#6b7062] sm:flex-row sm:items-center sm:justify-between">
+          <span>
+            {t.footer.rights} · {t.footer.tagline}
+          </span>
+          <Link href="/oferta" className="hover:text-milk">
+            {t.footer.offer}
+          </Link>
         </div>
       </div>
     </footer>

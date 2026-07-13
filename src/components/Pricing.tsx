@@ -18,38 +18,51 @@ export default function Pricing() {
           dark
         />
 
-        <Reveal className="overflow-x-auto">
-          <table className="w-full min-w-[560px] border-collapse text-left">
-            <thead>
-              <tr className="text-[12px] uppercase tracking-wide text-milk/55">
-                <th className="pb-4 pr-4 font-medium">{t.pricing.unit}</th>
-                <th className="pb-4 px-4 font-medium">{t.pricing.weekday}</th>
-                <th className="pb-4 px-4 font-medium">{t.pricing.weekend}</th>
-                <th className="pb-4 pl-4 font-medium">{t.pricing.holiday}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {UNITS.map((u) => (
-                <tr key={u.id} className="border-t border-white/10">
-                  <td className="py-4 pr-4">
-                    <div className="font-display text-[19px]">{u.name}</div>
-                    <div className="text-[12.5px] text-milk/55">
-                      до {u.capacity} гостей
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 font-mono text-[14px] text-milk/85">
-                    {fmtCur(u.weekdayPrice)}
-                  </td>
-                  <td className="px-4 py-4 font-mono text-[14px] text-[#D8C3A5]">
-                    {fmtCur(u.weekendPrice)}
-                  </td>
-                  <td className="py-4 pl-4 font-mono text-[14px] text-copper">
-                    {fmtCur(u.holidayPrice ?? u.weekendPrice)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <Reveal>
+          <div
+            className="rounded-3xl p-6 sm:p-8"
+            style={{ background: "rgba(246,242,235,.05)", border: "1px solid rgba(216,195,165,.18)" }}
+          >
+            <div className="flex flex-col gap-6">
+              <div className="eyebrow text-[#D8C3A5]">Всё включено · одинаково для всех домов A-Frame</div>
+              <div className="flex flex-wrap gap-x-12 gap-y-5">
+                <div>
+                  <div className="text-[12px] uppercase tracking-wide text-milk/55">
+                    {t.pricing.weekday}
+                  </div>
+                  <div className="mt-1 font-display text-[40px] leading-none text-milk sm:text-[48px]">
+                    {fmtCur(UNITS[0].weekdayPrice)}
+                    <span className="ml-2 font-sans text-[14px] text-milk/55">/ сутки</span>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[12px] uppercase tracking-wide text-milk/55">
+                    {t.pricing.weekend}
+                  </div>
+                  <div className="mt-1 font-display text-[40px] leading-none text-copper sm:text-[48px]">
+                    {fmtCur(UNITS[0].weekendPrice)}
+                    <span className="ml-2 font-sans text-[14px] text-milk/55">/ сутки</span>
+                  </div>
+                </div>
+              </div>
+              <div className="text-[13.5px] text-milk/60">
+                Выходные — ночи с пятницы на субботу и с субботы на воскресенье. Баня,
+                купель с ледяной водой, джакузи, беседка с мангалом, детская площадка и
+                пирс — уже в цене.
+              </div>
+              <ul className="flex flex-wrap gap-2">
+                {UNITS.map((u) => (
+                  <li
+                    key={u.id}
+                    className="rounded-full px-4 py-2 text-[13px] text-milk/85"
+                    style={{ border: "1px solid rgba(216,195,165,.28)" }}
+                  >
+                    {u.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </Reveal>
 
         <Reveal className="mt-8">

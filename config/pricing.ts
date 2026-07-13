@@ -9,30 +9,25 @@
 export const CURRENCY = "₸";
 
 /**
- * Дни недели, которые считаются «выходными» (ночь дороже).
+ * Дни недели, которые считаются «выходными» (ночь дороже — weekendPrice).
  * 0 = воскресенье, 1 = понедельник … 5 = пятница, 6 = суббота.
- * По умолчанию дороже ночи с пятницы на субботу и с субботы на воскресенье.
+ * Дороже ночи с пятницы на субботу (5) и с субботы на воскресенье (6).
  */
 export const WEEKEND_NIGHTS = [5, 6];
 
 /**
  * Праздничные даты (ISO, «YYYY-MM-DD») — ночь по этой дате считается по
- * праздничной цене домика (holidayPrice), либо по выходной, если она не задана.
- * Добавляйте сюда даты праздников/высокого сезона.
+ * праздничной цене дома (holidayPrice). Отдельный праздничный тариф пока не
+ * задан — список пустой (в такие ночи действует обычная будни/выходные цена).
+ * Добавьте сюда даты, если появится праздничный тариф.
  */
-export const HOLIDAYS: string[] = [
-  "2026-01-01",
-  "2026-01-02",
-  "2026-03-21", // Наурыз
-  "2026-03-22",
-  "2026-12-31",
-];
+export const HOLIDAYS: string[] = [];
 
 // ----------------------------------------------------------------------------
 //  ДОМИКИ (юниты). weekdayPrice — будни, weekendPrice — выходные, holidayPrice —
 //  праздники (необязательно; если не задано, берётся weekendPrice).
 // ----------------------------------------------------------------------------
-export type UnitId = "aframe" | "family" | "riverside";
+export type UnitId = "house1" | "house2" | "house3" | "house4";
 
 export interface Unit {
   id: UnitId;
@@ -46,48 +41,34 @@ export interface Unit {
   features: string[];
 }
 
+// Комплекс из 4 одинаковых домов A-Frame «всё включено» на одной приватной
+// территории. Каждый дом рассчитан до 16 гостей (на 2 этаже — двуспальное место).
+// Цена одинаковая у всех домов: будни 100 000 ₸, выходные 150 000 ₸ за сутки.
+// ⚠️ holidayPrice не задан отдельно → в праздники действует выходная цена.
+const HOUSE = {
+  capacity: 16,
+  weekdayPrice: 100000,
+  weekendPrice: 150000,
+  tagline: "Дом A-Frame «всё включено» у реки Чаган",
+  features: ["Всё включено", "Баня и купель", "Джакузи с подогревом", "Очаг с казаном и мангал"],
+};
+
 export const UNITS: Unit[] = [
-  {
-    id: "aframe",
-    name: "A-Frame Chalet",
-    tagline: "Уютный домик у воды для пары",
-    capacity: 2,
-    weekdayPrice: 90000,
-    weekendPrice: 120000,
-    holidayPrice: 140000,
-    image: "/img/real-exterior.webp",
-    features: ["Панорамное остекление", "Джакузи на террасе", "Камин", "Пирс"],
-  },
-  {
-    id: "family",
-    name: "Family Lodge",
-    tagline: "Просторный дом для всей семьи",
-    capacity: 8,
-    weekdayPrice: 130000,
-    weekendPrice: 170000,
-    holidayPrice: 200000,
-    image: "/img/real-living-wide.webp",
-    features: ["2 спальни", "Кухня-гостиная", "Барбекю-зона", "Детская площадка"],
-  },
-  {
-    id: "riverside",
-    name: "Riverside House",
-    tagline: "Вся приватная территория на берегу Чагана",
-    capacity: 16,
-    weekdayPrice: 180000,
-    weekendPrice: 230000,
-    holidayPrice: 270000,
-    image: "/img/real-pier.webp",
-    features: ["До 16 гостей днём", "Сауна и купель", "Костровая зона", "Пляж и волейбол"],
-  },
+  { id: "house1", name: "A-Frame №1", image: "/img/real-exterior.webp", ...HOUSE },
+  { id: "house2", name: "A-Frame №2", image: "/img/real-living-wide.webp", ...HOUSE },
+  { id: "house3", name: "A-Frame №3", image: "/img/real-pier.webp", ...HOUSE },
+  { id: "house4", name: "A-Frame №4", image: "/img/real-grounds.webp", ...HOUSE },
 ];
 
 // ----------------------------------------------------------------------------
 //  ДОПОЛНИТЕЛЬНЫЕ УСЛУГИ
+//  Всё на территории (баня, купель, джакузи, беседка с мангалом, детская
+//  площадка, пирс) уже ВКЛЮЧЕНО в стоимость аренды. Здесь остаются только
+//  сервисные допы по желанию гостя.
 //  mode: "once"      — фиксированная цена за всё бронирование
 //        "per_night" — цена умножается на число ночей
 // ----------------------------------------------------------------------------
-export type AddonId = "banya" | "chan" | "breakfast" | "transfer" | "bbq";
+export type AddonId = "breakfast" | "transfer";
 
 export interface Addon {
   id: AddonId;
@@ -98,11 +79,8 @@ export interface Addon {
 }
 
 export const ADDONS: Addon[] = [
-  { id: "banya", name: "Баня", note: "русская баня на дровах", price: 25000, mode: "once" },
-  { id: "chan", name: "Чан на дровах", note: "купель под открытым небом", price: 20000, mode: "once" },
   { id: "breakfast", name: "Завтрак", note: "за каждую ночь, на компанию", price: 8000, mode: "per_night" },
   { id: "transfer", name: "Трансфер", note: "из Уральска и обратно", price: 12000, mode: "once" },
-  { id: "bbq", name: "Барбекю-сет", note: "мангал, дрова, посуда", price: 15000, mode: "once" },
 ];
 
 // ----------------------------------------------------------------------------
@@ -110,6 +88,6 @@ export const ADDONS: Addon[] = [
 // ----------------------------------------------------------------------------
 export const BOOKING = {
   prepaymentPct: 30, // предоплата, %
-  defaultUnitId: "family" as UnitId,
+  defaultUnitId: "house1" as UnitId,
   minNights: 1,
 };

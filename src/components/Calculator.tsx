@@ -68,7 +68,7 @@ export default function Calculator() {
             <label className="eyebrow mb-2.5 block text-[#8B6849]">
               {t.calc.unit}
             </label>
-            <div className="mb-6 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+            <div className="mb-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
               {UNITS.map((u) => {
                 const on = u.id === unitId;
                 return (
@@ -219,23 +219,25 @@ export default function Calculator() {
                     </span>
                     <span className="font-semibold">{fmtCur(result.unitTotal)}</span>
                   </div>
-                  <div className="flex flex-wrap gap-x-3 gap-y-1 text-[12px] text-milk/55">
-                    {result.weekdayNights > 0 && (
-                      <span>
-                        {result.weekdayNights} × {t.calc.weekday}
-                      </span>
-                    )}
-                    {result.weekendNights > 0 && (
-                      <span>
-                        {result.weekendNights} × {t.calc.weekend}
-                      </span>
-                    )}
-                    {result.holidayNights > 0 && (
-                      <span>
-                        {result.holidayNights} × {t.calc.holiday}
-                      </span>
-                    )}
-                  </div>
+                  {(result.weekendNights > 0 || result.holidayNights > 0) && (
+                    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[12px] text-milk/55">
+                      {result.weekdayNights > 0 && (
+                        <span>
+                          {result.weekdayNights} × {t.calc.weekday}
+                        </span>
+                      )}
+                      {result.weekendNights > 0 && (
+                        <span>
+                          {result.weekendNights} × {t.calc.weekend}
+                        </span>
+                      )}
+                      {result.holidayNights > 0 && (
+                        <span>
+                          {result.holidayNights} × {t.calc.holiday}
+                        </span>
+                      )}
+                    </div>
+                  )}
                   {result.addonLines.map((l) => (
                     <div
                       key={l.id}

@@ -21,7 +21,7 @@ export default function Units() {
           title={t.units.title}
           subtitle={t.units.subtitle}
         />
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {UNITS.map((u, i) => (
             <Reveal key={u.id} delay={i * 80}>
               <article className="flex h-full flex-col overflow-hidden rounded-3xl bg-white shadow-[0_16px_40px_rgba(30,30,28,.08)]">
