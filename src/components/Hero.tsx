@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { ArrowDown, RotateCcw, Sparkles, X } from "lucide-react";
 import { CONTACT } from "@/data/content";
@@ -69,14 +68,18 @@ export default function Hero() {
       id="top"
       className="relative flex min-h-[100svh] items-end overflow-hidden bg-graphite"
     >
-      <Image
-        src="/img/real-exterior.webp"
-        alt="Khan Orda — дом A-Frame у реки"
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover motion-safe:animate-[heroDrift_18s_ease-in-out_infinite]"
-      />
+      <video
+        className="absolute inset-0 h-full w-full object-cover motion-safe:animate-[heroDrift_18s_ease-in-out_infinite]"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        poster="/img/hero-video-poster.webp"
+        aria-label="Khan Orda — дом A-Frame у реки"
+      >
+        <source src="/video/hero-video.mp4" type="video/mp4" />
+      </video>
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,20,15,.52)_0%,rgba(18,20,15,.14)_34%,rgba(18,20,15,.68)_64%,rgba(18,20,15,.96)_100%)]" />
 
       <div className="container-ko relative w-full pb-8 pt-28 sm:pb-16">
