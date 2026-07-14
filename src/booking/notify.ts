@@ -38,13 +38,26 @@ export async function notifyOwner(b: Booking): Promise<void> {
     return;
   }
 
-  try {
-    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: chatId, text }),
-    });
-  } catch (e) {
-    console.error("[notify:telegram] failed", e);
+  const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: chatId, text }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(
+      `[notify:telegram] HTTP ${res.status}: ${body.slice(0, 300)}`
+    );
+  }
+
+  const data = (await res.json().catch(() => null)) as
+    | { ok?: boolean; description?: string }
+    | null;
+
+  if (!data?.ok) {
+    throw new Error(
+      `[notify:telegram] API error: ${data?.description ?? "unknown"}`
+    );
   }
 }

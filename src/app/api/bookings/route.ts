@@ -29,8 +29,13 @@ export async function POST(req: Request) {
       consentOffer: Boolean(body.consentOffer),
     });
 
-    // Уведомление владельцу (Telegram / консоль в dev) — не блокируем ответ.
-    notifyOwner(booking).catch(() => {});
+    // Уведомление владельцу ждём до ответа: serverless может остановить
+    // фоновые async-задачи сразу после return.
+    try {
+      await notifyOwner(booking);
+    } catch (e) {
+      console.error("[api/bookings] notify failed", e);
+    }
 
     return NextResponse.json({
       booking,
