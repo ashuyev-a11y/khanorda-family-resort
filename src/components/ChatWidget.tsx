@@ -1,28 +1,25 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MessageCircle, X, Send, Loader2 } from "lucide-react";
+import { Loader2, RotateCcw, Send, X } from "lucide-react";
+import { formatLabel } from "@/data/personalization";
+import { useCalculator } from "@/context/CalculatorContext";
 
 type Msg = { role: "user" | "assistant"; text: string; suggestions?: string[] };
 
-// Топ-вопросы гостей — быстрые кнопки на старте.
 const START_SUGGESTIONS = [
-  "Сколько стоит?",
-  "Что входит в стоимость?",
-  "Свободно на выходных?",
+  "Свободные даты",
+  "Что входит в цену?",
   "Можно с детьми?",
-  "Есть баня и джакузи?",
-  "Как забронировать?",
 ];
 
 const GREETING: Msg = {
   role: "assistant",
   text:
-    "Здравствуйте! 🌿 Я помощник KHAN ORDA. Подскажу по отдыху и проверю свободные даты. Что вас интересует?",
+    "Здравствуйте! Я консьерж Khan Orda. Подскажу по датам, стоимости, правилам и помогу выбрать формат отдыха.",
   suggestions: START_SUGGESTIONS,
 };
 
-// Из ответа модели вытаскиваем строку «ВАРИАНТЫ: … | … | …» → пилюли.
 function parseReply(raw: string): { text: string; suggestions: string[] } {
   const m = raw.match(/ВАРИАНТЫ:\s*(.+?)\s*$/im);
   if (!m || m.index === undefined) return { text: raw.trim(), suggestions: [] };
@@ -35,21 +32,45 @@ function parseReply(raw: string): { text: string; suggestions: string[] } {
 }
 
 export default function ChatWidget() {
-  const [open, setOpen] = useState(false);
+  const {
+    checkin,
+    checkout,
+    guests,
+    personalization,
+    closeConcierge,
+  } = useCalculator();
   const [messages, setMessages] = useState<Msg[]>([GREETING]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
-  }, [messages, loading, open]);
+    if (personalization.conciergeOpen) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [personalization.conciergeOpen]);
+
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages, loading, personalization.conciergeOpen]);
 
   async function sendText(raw: string) {
     const text = raw.trim();
     if (!text || loading) return;
-    const next = [...messages, { role: "user" as const, text }];
-    setMessages(next);
+    const context = personalization.applied
+      ? `Контекст подбора: формат — ${formatLabel(
+          personalization.format
+        )}, гостей — ${guests}, даты — ${checkin || "не выбрано"} → ${
+          checkout || "не выбрано"
+        }.`
+      : "";
+    const next = [
+      ...messages,
+      { role: "user" as const, text: context ? `${context}\n\n${text}` : text },
+    ];
+    setMessages([...messages, { role: "user", text }]);
     setInput("");
     setLoading(true);
     try {
@@ -60,7 +81,8 @@ export default function ChatWidget() {
       });
       const data = await res.json();
       const { text: reply, suggestions } = parseReply(
-        data.reply || "Извините, попробуйте ещё раз."
+        data.reply ||
+          "Спасибо за сообщение. Если хотите, администратор подтвердит детали в WhatsApp."
       );
       setMessages((m) => [
         ...m,
@@ -71,7 +93,8 @@ export default function ChatWidget() {
         ...m,
         {
           role: "assistant",
-          text: "Ошибка связи. Напишите нам в WhatsApp — ответим быстро.",
+          text: "Связь с помощником временно недоступна. Напишите нам в WhatsApp — подтвердим даты и стоимость.",
+          suggestions: START_SUGGESTIONS,
         },
       ]);
     } finally {
@@ -79,117 +102,107 @@ export default function ChatWidget() {
     }
   }
 
-  return (
-    <>
-      {/* плавающая кнопка */}
-      {!open && (
-        <button
-          onClick={() => setOpen(true)}
-          aria-label="Спросить помощника"
-          className="fixed bottom-4 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-forest text-milk shadow-[0_10px_30px_rgba(30,30,28,.3)] transition hover:bg-pine max-[860px]:bottom-[84px]"
-        >
-          <MessageCircle size={24} />
-        </button>
-      )}
+  if (!personalization.conciergeOpen) return null;
 
-      {/* панель чата */}
-      {open && (
-        <div className="fixed bottom-4 right-4 z-40 flex h-[560px] max-h-[calc(100vh-100px)] w-[min(384px,calc(100vw-2rem))] flex-col overflow-hidden rounded-3xl bg-milk shadow-[0_20px_60px_rgba(30,30,28,.35)] max-[860px]:inset-x-3 max-[860px]:bottom-[84px] max-[860px]:w-auto">
-          {/* header */}
-          <div className="flex items-center justify-between bg-forest px-4 py-3.5 text-milk">
-            <div className="flex items-center gap-2.5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-copper/90">
-                <MessageCircle size={16} />
-              </span>
-              <div>
-                <div className="text-[14px] font-semibold leading-tight">
-                  Khan Orda · помощник
-                </div>
-                <div className="text-[11px] text-milk/60">Отвечает за секунды</div>
-              </div>
+  return (
+    <div className="fixed inset-0 z-[80] flex bg-[#EFE7D7]">
+      <div className="mx-auto flex h-full w-full max-w-[720px] flex-col bg-[#f2ece1] shadow-2xl">
+        <header className="flex items-center justify-between bg-forest px-5 py-4 text-milk">
+          <div>
+            <div className="eyebrow text-[10px] tracking-[2px] text-sand">
+              ✦ Консьерж
             </div>
+            <div className="mt-1 font-display text-[23px]">Khan Orda</div>
+          </div>
+          <div className="flex items-center gap-2">
             <button
-              onClick={() => setOpen(false)}
-              aria-label="Закрыть"
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 hover:bg-white/20"
+              onClick={() => {
+                setMessages([GREETING]);
+                setInput("");
+              }}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10"
+              aria-label="Сбросить чат"
             >
-              <X size={16} />
+              <RotateCcw size={17} />
+            </button>
+            <button
+              onClick={closeConcierge}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10"
+              aria-label="Закрыть"
+            >
+              <X size={18} />
             </button>
           </div>
+        </header>
 
-          {/* messages */}
-          <div
-            ref={scrollRef}
-            className="flex-1 space-y-3 overflow-y-auto bg-[#f2ece1] px-3.5 py-4"
-          >
-            {messages.map((m, i) => (
+        <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-5">
+          {messages.map((m, i) => (
+            <div
+              key={i}
+              className={m.role === "user" ? "flex justify-end" : "flex justify-start"}
+            >
               <div
-                key={i}
-                className={m.role === "user" ? "flex justify-end" : "flex justify-start"}
+                className={
+                  "max-w-[86%] whitespace-pre-line rounded-2xl px-4 py-3 text-[14.5px] leading-relaxed " +
+                  (m.role === "user"
+                    ? "rounded-br-md bg-copper text-milk"
+                    : "rounded-bl-md bg-white text-forest shadow-sm")
+                }
               >
-                <div
-                  className={
-                    "max-w-[85%] whitespace-pre-line rounded-2xl px-3.5 py-2.5 text-[14px] leading-relaxed " +
-                    (m.role === "user"
-                      ? "bg-forest text-milk"
-                      : "bg-white text-[#2b2f28] shadow-sm")
-                  }
-                >
-                  {m.text}
-                </div>
+                {m.text}
               </div>
-            ))}
-            {/* контекстные пилюли под последним ответом */}
-            {!loading &&
-              (() => {
-                const last = messages[messages.length - 1];
-                const sug =
-                  last?.role === "assistant" ? last.suggestions : undefined;
-                if (!sug?.length) return null;
-                return (
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    {sug.map((q) => (
-                      <button
-                        key={q}
-                        onClick={() => sendText(q)}
-                        className="rounded-full border border-[#d8c3a5] bg-white px-3 py-1.5 text-[12.5px] text-forest transition hover:bg-[#eef3e8]"
-                      >
-                        {q}
-                      </button>
-                    ))}
-                  </div>
-                );
-              })()}
-            {loading && (
-              <div className="flex justify-start">
-                <div className="flex items-center gap-2 rounded-2xl bg-white px-3.5 py-2.5 text-[13px] text-[#8a8f84] shadow-sm">
-                  <Loader2 size={14} className="animate-spin" /> печатает…
-                </div>
-              </div>
-            )}
-          </div>
+            </div>
+          ))}
 
-          {/* input */}
-          <div className="flex items-center gap-2 border-t border-[#e3d8c3] bg-milk p-2.5">
+          {!loading &&
+            (() => {
+              const last = messages[messages.length - 1];
+              if (last?.role !== "assistant" || !last.suggestions?.length) return null;
+              return (
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {last.suggestions.map((q) => (
+                    <button
+                      key={q}
+                      onClick={() => sendText(q)}
+                      className="rounded-full border border-[#d8c3a5] bg-white px-3 py-1.5 text-[12.5px] font-medium text-forest"
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              );
+            })()}
+
+          {loading && (
+            <div className="flex justify-start">
+              <div className="flex items-center gap-2 rounded-2xl bg-white px-4 py-3 text-[13px] text-[#8a8f84] shadow-sm">
+                <Loader2 size={14} className="animate-spin" />
+                печатает…
+              </div>
+            </div>
+          )}
+        </div>
+
+        <footer className="border-t border-[#e3d8c3] bg-milk p-3 pb-[calc(12px+env(safe-area-inset-bottom))]">
+          <div className="flex items-center gap-2">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && sendText(input)}
-              placeholder="Спросите о датах, ценах, бронировании…"
-              className="flex-1 rounded-full bg-white px-4 py-2.5 text-[14px] text-forest outline-none"
-              style={{ border: "1px solid #ddd1ba" }}
+              placeholder="Спросите про даты, цены или правила…"
+              className="min-w-0 flex-1 rounded-full border border-[#ddd1ba] bg-white px-4 py-3 text-[14px] text-forest outline-none"
             />
             <button
               onClick={() => sendText(input)}
               disabled={loading || !input.trim()}
+              className="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-copper text-milk disabled:opacity-40"
               aria-label="Отправить"
-              className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-copper text-milk transition hover:bg-copper-dark disabled:opacity-40"
             >
-              <Send size={17} />
+              <Send size={18} />
             </button>
           </div>
-        </div>
-      )}
-    </>
+        </footer>
+      </div>
+    </div>
   );
 }

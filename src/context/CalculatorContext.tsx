@@ -9,6 +9,18 @@ import {
 } from "react";
 import { BOOKING, type AddonId, type UnitId } from "@config/pricing";
 import { calcPrice, type CalcResult } from "@/lib/pricing";
+import type { ImportantKey, RestFormat } from "@/data/personalization";
+
+type PersonalizationState = {
+  hero: "intro" | "wizard" | "result";
+  step: 1 | 2 | 3 | 4;
+  format: RestFormat;
+  when: string;
+  kids: boolean | null;
+  important: Record<ImportantKey, boolean>;
+  applied: boolean;
+  conciergeOpen: boolean;
+};
 
 type CalculatorContextValue = {
   unitId: UnitId;
@@ -26,6 +38,17 @@ type CalculatorContextValue = {
   bookingOpen: boolean;
   openBooking: () => void;
   closeBooking: () => void;
+  personalization: PersonalizationState;
+  startWizard: () => void;
+  cancelWizard: () => void;
+  resetWizard: () => void;
+  pickFormat: (format: RestFormat) => void;
+  pickWhen: (key: string) => void;
+  setKids: (value: boolean) => void;
+  toggleImportant: (key: ImportantKey) => void;
+  finishWizard: () => void;
+  openConcierge: () => void;
+  closeConcierge: () => void;
 };
 
 function scrollToCalc() {
@@ -46,6 +69,22 @@ export function CalculatorProvider({ children }: { children: React.ReactNode }) 
   const [guests, setGuests] = useState(2);
   const [addons, setAddons] = useState<AddonId[]>([]);
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [personalization, setPersonalization] = useState<PersonalizationState>({
+    hero: "intro",
+    step: 1,
+    format: "family",
+    when: "",
+    kids: null,
+    important: {
+      banya: false,
+      jacuzzi: false,
+      fishing: false,
+      bbq: false,
+      play: false,
+    },
+    applied: false,
+    conciergeOpen: false,
+  });
 
   const toggleAddon = useCallback((id: AddonId) => {
     setAddons((prev) =>
@@ -71,6 +110,88 @@ export function CalculatorProvider({ children }: { children: React.ReactNode }) 
   const openBooking = useCallback(() => setBookingOpen(true), []);
   const closeBooking = useCallback(() => setBookingOpen(false), []);
 
+  const startWizard = useCallback(() => {
+    setPersonalization((s) => ({ ...s, hero: "wizard", step: 1 }));
+    document.getElementById("top")?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  const cancelWizard = useCallback(() => {
+    setPersonalization((s) => ({ ...s, hero: s.applied ? "result" : "intro" }));
+  }, []);
+
+  const resetWizard = useCallback(() => {
+    setPersonalization((s) => ({
+      ...s,
+      hero: "wizard",
+      step: 1,
+      applied: false,
+      important: {
+        banya: false,
+        jacuzzi: false,
+        fishing: false,
+        bbq: false,
+        play: false,
+      },
+    }));
+    document.getElementById("top")?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  const pickFormat = useCallback((format: RestFormat) => {
+    setPersonalization((s) => ({ ...s, format, step: 2 }));
+  }, []);
+
+  const pickWhen = useCallback(
+    (key: string) => {
+      const d = new Date();
+      if (key === "tomorrow") d.setDate(d.getDate() + 1);
+      if (key === "weekend") {
+        const offset = (5 - d.getDay() + 7) % 7 || 7;
+        d.setDate(d.getDate() + offset);
+      }
+      if (key === "date") d.setDate(d.getDate() + 7);
+
+      const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}-${String(d.getDate()).padStart(2, "0")}`;
+      const out = new Date(`${iso}T00:00:00`);
+      out.setDate(out.getDate() + 1);
+      const checkoutIso = `${out.getFullYear()}-${String(
+        out.getMonth() + 1
+      ).padStart(2, "0")}-${String(out.getDate()).padStart(2, "0")}`;
+
+      setCheckin(iso);
+      setCheckout(checkoutIso);
+      setPersonalization((s) => ({ ...s, when: key, step: 3 }));
+    },
+    [setCheckin, setCheckout]
+  );
+
+  const setKids = useCallback((value: boolean) => {
+    setPersonalization((s) => ({ ...s, kids: value, step: 4 }));
+  }, []);
+
+  const toggleImportant = useCallback((key: ImportantKey) => {
+    setPersonalization((s) => ({
+      ...s,
+      important: { ...s.important, [key]: !s.important[key] },
+    }));
+  }, []);
+
+  const finishWizard = useCallback(() => {
+    setPersonalization((s) => ({ ...s, hero: "result", applied: true }));
+  }, []);
+
+  const openConcierge = useCallback(
+    () => setPersonalization((s) => ({ ...s, conciergeOpen: true })),
+    []
+  );
+
+  const closeConcierge = useCallback(
+    () => setPersonalization((s) => ({ ...s, conciergeOpen: false })),
+    []
+  );
+
   const value: CalculatorContextValue = {
     unitId,
     checkin,
@@ -87,6 +208,17 @@ export function CalculatorProvider({ children }: { children: React.ReactNode }) 
     bookingOpen,
     openBooking,
     closeBooking,
+    personalization,
+    startWizard,
+    cancelWizard,
+    resetWizard,
+    pickFormat,
+    pickWhen,
+    setKids,
+    toggleImportant,
+    finishWizard,
+    openConcierge,
+    closeConcierge,
   };
 
   return (

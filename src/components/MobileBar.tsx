@@ -1,43 +1,43 @@
 "use client";
 
-import { MessageCircle } from "lucide-react";
-import { CONTACT } from "@/data/content";
-import { useI18n } from "@/i18n/LanguageProvider";
+import { Camera, Home, MessageCircle, Sparkles, Umbrella, Wallet } from "lucide-react";
 import { useCalculator } from "@/context/CalculatorContext";
 
-/** Fixed bottom action bar on phones (≤860px, hidden above via CSS). */
 export default function MobileBar() {
-  const { t } = useI18n();
-  const { openBooking } = useCalculator();
+  const { openConcierge } = useCalculator();
+  const item =
+    "flex flex-1 flex-col items-center justify-center gap-1 text-[10px] font-semibold text-forest/70";
+
   return (
-    <div
-      className="fixed inset-x-0 bottom-0 z-50 hidden max-[860px]:flex"
-      style={{
-        gap: 10,
-        padding: "12px 16px calc(12px + env(safe-area-inset-bottom))",
-        background: "rgba(246,242,235,.92)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        borderTop: "1px solid #e3d8c3",
-        boxShadow: "0 -6px 24px rgba(30,30,28,.1)",
-      }}
-    >
-      <button
-        onClick={openBooking}
-        className="flex-1 rounded-xl bg-copper py-3.5 text-center text-[16px] font-bold text-milk"
-      >
-        {t.hero.cta}
-      </button>
-      <a
-        href={CONTACT.whatsapp}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="WhatsApp"
-        className="flex w-[52px] flex-none items-center justify-center rounded-xl text-forest"
-        style={{ background: "#eef3e8", border: "1px solid #ccd6c2" }}
-      >
-        <MessageCircle size={20} />
+    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-[#e3d8c3] bg-milk/94 px-2 pb-[calc(7px+env(safe-area-inset-bottom))] pt-2 shadow-[0_-6px_24px_rgba(30,30,28,.1)] backdrop-blur-xl max-[860px]:flex hidden">
+      <a href="#top" className={item}>
+        <Home size={18} />
+        Главная
       </a>
-    </div>
+      <a href="#gallery" className={item}>
+        <Camera size={18} />
+        Галерея
+      </a>
+      <button
+        onClick={openConcierge}
+        className="-mt-8 flex flex-1 flex-col items-center justify-center gap-1 text-[10px] font-bold text-forest"
+      >
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-copper text-milk shadow-[0_12px_30px_rgba(198,123,82,.45)]">
+          <MessageCircle size={24} />
+        </span>
+        Консьерж
+      </button>
+      <a href="#amenities" className={item}>
+        <Umbrella size={18} />
+        Удобства
+      </a>
+      <a href="#calc" className={item}>
+        <Wallet size={18} />
+        Цены
+      </a>
+      <span className="sr-only">
+        <Sparkles />
+      </span>
+    </nav>
   );
 }
