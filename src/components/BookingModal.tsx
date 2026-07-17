@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type TouchEvent } from "react";
 import { X, Check, Info, Loader2, ShieldCheck, MessageCircle } from "lucide-react";
 import { UNITS } from "@config/pricing";
 import { CONTACT } from "@/data/content";
@@ -44,6 +44,8 @@ export default function BookingModal({
   const [error, setError] = useState("");
   const [booking, setBooking] = useState<CreatedBooking | null>(null);
   const [payment, setPayment] = useState<PaymentInfo | null>(null);
+  const [dragY, setDragY] = useState(0);
+  const touchStartY = useRef<number | null>(null);
 
   // reset when (re)opened
   useEffect(() => {
@@ -52,6 +54,7 @@ export default function BookingModal({
       setError("");
       setBooking(null);
       setPayment(null);
+      setDragY(0);
     }
   }, [open]);
 
@@ -118,15 +121,44 @@ export default function BookingModal({
     }
   }
 
+  function onTouchStart(e: TouchEvent<HTMLDivElement>) {
+    touchStartY.current = e.touches[0]?.clientY ?? null;
+    setDragY(0);
+  }
+
+  function onTouchMove(e: TouchEvent<HTMLDivElement>) {
+    if (touchStartY.current == null) return;
+    if (e.currentTarget.scrollTop > 0) return;
+    const next = Math.max(0, e.touches[0].clientY - touchStartY.current);
+    setDragY(Math.min(next, 180));
+  }
+
+  function onTouchEnd() {
+    if (dragY > 80) {
+      onClose();
+      return;
+    }
+    touchStartY.current = null;
+    setDragY(0);
+  }
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4"
+      className="fixed inset-0 z-[70] flex items-end justify-center bg-black/50 p-0 pb-[calc(72px+env(safe-area-inset-bottom))] sm:items-center sm:p-4"
       onClick={onClose}
     >
       <div
-        className="max-h-[92vh] w-full max-w-[520px] overflow-y-auto rounded-t-3xl bg-milk p-6 shadow-2xl sm:rounded-3xl sm:p-7"
+        className="max-h-[calc(100dvh-84px-env(safe-area-inset-bottom))] w-full max-w-[520px] overflow-y-auto rounded-t-3xl bg-milk p-6 shadow-2xl transition-transform duration-200 ease-out sm:max-h-[92vh] sm:rounded-3xl sm:p-7"
+        style={{ transform: dragY ? `translateY(${dragY}px)` : undefined }}
         onClick={(e) => e.stopPropagation()}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       >
+        <div
+          className="mx-auto mb-4 h-1.5 w-11 rounded-full bg-forest/20 sm:hidden"
+          aria-hidden="true"
+        />
         <div className="mb-5 flex items-start justify-between">
           <div>
             <div className="eyebrow text-[#8B6849]">
@@ -278,14 +310,16 @@ export default function BookingModal({
               <p className="mt-3 text-[13px] text-red-600">{error}</p>
             )}
 
-            <button
-              onClick={submit}
-              disabled={!canSubmit}
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-copper py-3.5 text-[15px] font-bold text-milk transition enabled:hover:bg-copper-dark disabled:cursor-not-allowed disabled:opacity-45"
-            >
-              {submitting && <Loader2 size={16} className="animate-spin" />}
-              Перейти к оплате · {fmtCur(result.total)}
-            </button>
+            <div className="sticky bottom-0 -mx-6 mt-5 bg-milk px-6 pb-1 pt-3 sm:static sm:mx-0 sm:bg-transparent sm:p-0">
+              <button
+                onClick={submit}
+                disabled={!canSubmit}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-copper py-3.5 text-[15px] font-bold text-milk shadow-[0_-10px_24px_rgba(246,242,235,.94)] transition enabled:hover:bg-copper-dark disabled:cursor-not-allowed disabled:opacity-45 sm:shadow-none"
+              >
+                {submitting && <Loader2 size={16} className="animate-spin" />}
+                Перейти к оплате · {fmtCur(result.total)}
+              </button>
+            </div>
           </>
         ) : (
           /* ---------- шаг оплаты ---------- */
